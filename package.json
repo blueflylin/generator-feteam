@@ -1,6 +1,6 @@
 {
   "name": "generator-feteam",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A generator for yeoman to kickstart web projects frontend using feteam, seajs, foundation, sass and assemble.",
   "keywords": [
     "yeoman-generator",
