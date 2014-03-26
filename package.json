@@ -1,6 +1,6 @@
 {
   "name": "generator-feteam",
-  "version": "0.1.3",
+  "version": "0.1.6",
   "description": "a generator frontend workflow for yeoman,it has foundation,assemble,sass,seajs",
   "keywords": [
     "yeoman-generator",
