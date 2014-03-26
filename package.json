@@ -1,6 +1,6 @@
 {
   "name": "generator-feteam",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A generator for yeoman to kickstart web projects frontend using bootstrap, foundation, less, sass and assemble.",
   "keywords": [
     "yeoman-generator",
@@ -9,12 +9,10 @@
     "foundation"
   ],
   "homepage": "https://github.com/blueflylin/generator-feteam",
-  "bugs": "https://github.com/blueflylin/generator-feteam/issues",
-  "author": {
-    "name": "bluefly",
-    "email": "gzlinyi@163.com",
-    "url": "https://github.com/blueflylin"
+  "bugs": {
+    "url": "https://github.com/blueflylin/generator-feteam/issues"
   },
+  "author": "bluefly <gzlinyi@163.com> (https://github.com/blueflylin)",
   "main": "app/index.js",
   "repository": {
     "type": "git",
@@ -40,5 +38,9 @@
     {
       "type": "MIT"
     }
-  ]
+  ],
+  "directories": {
+    "test": "test"
+  },
+  "license": "ISC"
 }
