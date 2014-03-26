@@ -1,11 +1,11 @@
 {
   "name": "generator-feteam",
   "version": "0.1.1",
-  "description": "A generator for yeoman to kickstart web projects frontend using bootstrap, foundation, less, sass and assemble.",
+  "description": "A generator for yeoman to kickstart web projects frontend using feteam, seajs, foundation, sass and assemble.",
   "keywords": [
     "yeoman-generator",
     "assemble",
-    "bootstrap",
+    "seajs",
     "foundation"
   ],
   "homepage": "https://github.com/blueflylin/generator-feteam",
