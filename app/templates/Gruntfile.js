@@ -12,9 +12,15 @@ module.exports = function(grunt) {
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
   grunt.loadNpmTasks('assemble');
 
-  var path = require('path');
+  // var path = require('path');
+  // configurable paths
+  var yeomanConfig = {
+    app:'app',
+    dist:'dist'
+  };
 
   grunt.initConfig({
+    yeoman:yeomanConfig,
 
     pkg: grunt.file.readJSON('package.json'),
 
@@ -29,37 +35,30 @@ module.exports = function(grunt) {
         options: {
           nospawn: true,
         },
-      },<% if (kickstartPackage == 'bootstrap') { %>
-      less: {
-        files: ['app/less/{,*/}*.less'],
-        tasks: ['watchcontexthelper:less'],
-        options: {
-          nospawn: true
-        },
-      },<% } else { %>
+      },
       sass: {
-        files: ['app/sass/{,*/}*.{scss,sass}'],
+      files: ['<%= yeoman.app %>/sass/{,*/}*.{scss,sass}'],
         tasks: ['watchcontexthelper:sass'],
         options: {
           nospawn: true
         },
-      },<% } %>
+      },
       js: {
-        files: ['app/js/**/*.js'],
+        files: ['<%= yeoman.app %>/js/**/*.js'],
         tasks: ['watchcontexthelper:js'],
         options: {
           nospawn: true
         },
       },
       img: {
-        files: ['app/img/**/*'],
+        files: ['<%= yeoman.app %>/images/**/*'],
         tasks: ['watchcontexthelper:img'],
         options: {
           nospawn: true
         },
       },
       html: {
-        files: ['app/html/**/*.hbs'],
+        files: ['<%= yeoman.app %>/html/**/*.hbs'],
         tasks: ['watchcontexthelper:html'],
         options: {
           nospawn: true
@@ -95,121 +94,85 @@ module.exports = function(grunt) {
 
     open: {
       server: {
-        path: 'http://localhost:<%%= connect.options.port %>/html/'
+        path: 'http://localhost:<%= connect.options.port %>/html/'
       }
     },
-    <% if (kickstartPackage == 'bootstrap') { %>
-    less: {
-      main: {
-        files: {
-          'dist/css/main.css': 'app/less/app/main.less',
-        },
-      },
-      mainResponsive: {
-        files: {
-          'dist/css/main-responsive.css': 'app/less/app/main-responsive.less',
-        },
-      },
-    },<% } else if (kickstartPackage == 'bootstrap-sass') { %>
-    sass: {
-      main: {
-        files: {
-          'dist/css/main.css': 'app/sass/app/main.scss',
-        },
-      },
-      mainResponsive: {
-        files: {
-          'dist/css/main-responsive.css': 'app/sass/app/main-responsive.scss',
-        },
-      },
-    },<% } else { %>
-    sass: {
-      main: {
-        files: {
-          'dist/css/main.css': 'app/sass/app/main.scss',
-        },
-      },
-    },<% } %>
-
     cssmin: {
       minify: {
         options: {},
         expand: true,
-        cwd: 'dist/css/',
+        cwd: '<%= yeoman.dist %>/css/',
         src: [ '*.css', '!*.min.css' ],
-        dest: 'dist/css/',
+        dest: '<%= yeoman.dist %>/css/',
         ext: '.min.css',
       }
     },
 
-    concat: {<% if (kickstartPackage == 'foundation') { %>
-      js: {
-        src: [
-          'app/js/foundation/foundation.js',
-          'app/js/foundation/foundation.alerts.js',
-          'app/js/foundation/foundation.clearing.js',
-          'app/js/foundation/foundation.cookie.js',
-          'app/js/foundation/foundation.dropdown.js',
-          'app/js/foundation/foundation.forms.js',
-          'app/js/foundation/foundation.interchange.js',
-          'app/js/foundation/foundation.joyride.js',
-          'app/js/foundation/foundation.magellan.js',
-          'app/js/foundation/foundation.orbit.js',
-          'app/js/foundation/foundation.placeholder.js',
-          'app/js/foundation/foundation.reveal.js',
-          'app/js/foundation/foundation.section.js',
-          'app/js/foundation/foundation.tooltips.js',
-          'app/js/foundation/foundation.topbar.js',
-          'app/js/app/app.js',
-        ],
-        dest: 'dist/js/frontend.js'
-      },<% } else { %>
-      js: {
-       src: [
-         'app/js/bootstrap/bootstrap-affix.js',
-         'app/js/bootstrap/bootstrap-alert.js',
-         'app/js/bootstrap/bootstrap-button.js',
-         'app/js/bootstrap/bootstrap-carousel.js',
-         'app/js/bootstrap/bootstrap-collapse.js',
-         'app/js/bootstrap/bootstrap-dropdown.js',
-         'app/js/bootstrap/bootstrap-modal.js',
-         'app/js/bootstrap/bootstrap-tooltip.js',
-         'app/js/bootstrap/bootstrap-popover.js',
-         'app/js/bootstrap/bootstrap-scrollspy.js',
-         'app/js/bootstrap/bootstrap-tab.js',
-         'app/js/bootstrap/bootstrap-transition.js',
-         'app/js/bootstrap/bootstrap-typeahead.js',
-         'app/js/app/app.js',
-       ],
-       dest: 'dist/js/frontend.js'
-      },<% } %>
+    concat: {
+      seajs: {
+                options: {
+                    relative: true,
+                    include: 'all',
+                    paths: [
+                        '<%= yeoman.app %>/js/sea-modules',
+                        '.build'
+                    ]
+                },
+                files: {
+                    '<%= yeoman.dist %>/js/main.js': ['.build/{,*/,*/*/}*.js']
+                }
+            }
     },
+    transport: {
+            options: {
+                debug: false,
+                alias: {
+                },
+                paths: [
+                    '<%= yeoman.app %>/js/sea-modules'
+                ]
+            },
+            seajs: {
+                options: {
+                    paths: [
+                        '',
+                        '.build'
+                    ]
+                },
+                files: [
+                    {
+                        expand:'true',
+                        cwd: '',
+                        src: [
+                        ],
+                        dest: '.build'
+                    }
+                ]
+            }
+        },
+
 
     uglify: {
+
       options: {},
-      vendor: {
-        files: [
-          { expand: true, cwd: 'dist/js/vendor/', src: [ '**/*.js', '!**/*.min.js' ], dest: 'dist/js/vendor/', ext: '.min.js' },
-        ]
-      },
-      frontend: {
-        files: [
-          { 'dist/js/frontend.min.js': 'dist/js/frontend.js' },
-        ]
-      },
+      seajs: {
+                files: {
+                    '<%= yeoman.dist %>/js/main.js': '<%= yeoman.dist %>/js/main.js'
+                }
+            },
     },
 
     assemble: {
       options: {
-        data: 'app/html/data/*.{json,yml}',
-        partials: 'app/html/partials/**/*.hbs',
+        data: '<%= yeoman.app %>/html/data/*.{json,yml}',
+        partials: '<%= yeoman.app %>/html/partials/**/*.hbs',
       },
       development: {
         options: {
           production: false
         },
         files: [
-          { expand: true, cwd: 'app/html/pages/', src: ['**/*.hbs'], dest: 'dist/html/' }
+          { expand: true, cwd: '<%= yeoman.app %>/html/pages/', src: ['**/*.hbs'], dest: '<%= yeoman.dist %>/html/' }
         ],
       },
       production: {
@@ -217,37 +180,48 @@ module.exports = function(grunt) {
           production: true
         },
         files: [
-          { expand: true, cwd: 'app/html/pages/', src: ['**/*.hbs'], dest: 'dist/html/' }
+          { expand: true, cwd: '<%= yeoman.app %>/html/pages/', src: ['**/*.hbs'], dest: '<%= yeoman.dist %>/html/' }
         ],
       },
     },
 
     copy: {
+      seajs: {
+                files: [
+                    {
+                        expand: true,
+                        dot: true,
+                        cwd: '<%= yeoman.app %>/js',
+                        src: ['sea-modules/**', 'config.js'],
+                        dest: '<%= yeoman.dist %>/js'
+                    }
+                ]
+            },
       js: {
         files: [
-          { expand: true, cwd: 'app/js/vendor/', src: '**/*', dest: 'dist/js/vendor/', filter: 'isFile' },
+          { expand: true, cwd: '<%= yeoman.app %>/js/', src: '**/*', dest: '<%= yeoman.dist %>/js/', filter: 'isFile' },
         ],
       },
       img: {
         files: [
-          { expand: true, cwd: 'app/img/', src: '**/*', dest: 'dist/img/' },
+          { expand: true, cwd: '<%= yeoman.app %>/images/', src: '**/*', dest: '<%= yeoman.dist %>/images/' },
         ],
       },
       html: {
         files: [
-          { expand: true, cwd: 'app/html/pages/', src: '**/*.html', dest: 'dist/html/' },
+          { expand: true, cwd: '<%= yeoman.app %>/html/pages/', src: '**/*.html', dest: '<%= yeoman.dist %>/html/' },
         ],
       },
     },
 
     clean: {
-      dist: [ 'dist' ],
-      js: [ 'dist/js' ],
-      css: [ 'dist/css' ],
-      html: [ 'dist/html' ],
-      img: [ 'dist/img' ],
-      devjs: [ 'dist/js/**/*.js', '!dist/js/**/*.min.js' ],
-      devcss: [ 'dist/css/*.css', '!dist/css/*.min.css' ],
+      dist: [ '<%= yeoman.dist %>' ],
+      js: [ '<%= yeoman.dist %>/js' ],
+      css: [ '<%= yeoman.dist %>/css' ],
+      html: [ '<%= yeoman.dist %>/html' ],
+      img: [ '<%= yeoman.dist %>/images' ],
+      devjs: [ '<%= yeoman.dist %>/js/**/*.js', '!<%= yeoman.dist %>/js/**/*.min.js' ],
+      devcss: [ '<%= yeoman.dist %>/css/*.css', '!<%= yeoman.dist %>/css/*.min.css' ],
     }
   });
 
@@ -311,42 +285,43 @@ module.exports = function(grunt) {
         (grunt.watchcontext === 'production') ?
         grunt.task.run(['clean:html', 'copy:html', 'assemble:production']) :
         grunt.task.run(['clean:html', 'copy:html', 'assemble:development']);
-        break;<% if (kickstartPackage == 'bootstrap') { %>
-      case 'less':
-        (grunt.watchcontext === 'production') ?
-        grunt.task.run(['clean:css', 'less', 'cssmin', 'clean:devcss']) :
-        grunt.task.run(['clean:css', 'less']);
-        break;<% } else { %>
+        break;
       case 'sass':
         (grunt.watchcontext === 'production') ?
         grunt.task.run(['clean:css', 'sass', 'cssmin', 'clean:devcss']) :
         grunt.task.run(['clean:css', 'sass']);
-        break; <% } %>
+        break;
     }
   });
 
+  grunt.registerTask('sea', [
+        'transport:seajs',
+        'concat:seajs'
+    ]);
+
   grunt.registerTask('production', [
     'clean:dist',
-    'concat',<% if (kickstartPackage == 'bootstrap') { %>
-    'less',<% } else { %>
-    'sass',<% } %>
+    'concat',
     'cssmin',
     'clean:devcss',
     'copy:img',
     'copy:js',
-    'uglify',
     'clean:devjs',
+    'transport:seajs',
+        'concat:seajs',
+        'uglify:seajs',
     'copy:html',
     'assemble:production'
   ]);
 
   grunt.registerTask('development', [
     'clean:dist',
-    'concat',<% if (kickstartPackage == 'bootstrap') { %>
-    'less',<% } else { %>
-    'sass',<% } %>
+    'concat',
     'copy:img',
     'copy:js',
+    'transport:seajs',
+        'concat:seajs',
+        'uglify:seajs',
     'copy:html',
     'assemble:development'
   ]);
