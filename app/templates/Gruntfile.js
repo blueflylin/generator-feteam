@@ -15,7 +15,6 @@ module.exports = function(grunt) {
   var path = require('path');
 
   grunt.initConfig({
-    yeoman:yeomanConfig,
 
     pkg: grunt.file.readJSON('package.json'),
 
