@@ -1,11 +1,11 @@
 {
   "name": "generator-feteam",
-  "version": "0.1.7",
-  "description": "a generator frontend workflow for yeoman,it has foundation,assemble,sass,seajs",
+  "version": "0.1.9",
+  "description": "a generator frontend workflow for yeoman,it has foundation,bootstrap,assemble,sass",
   "keywords": [
     "yeoman-generator",
     "assemble",
-    "seajs",
+    "bootstrap",
     "foundation"
   ],
   "homepage": "https://github.com/blueflylin/generator-feteam",
@@ -39,8 +39,4 @@
       "type": "MIT"
     }
   ],
-  "directories": {
-    "test": "test"
-  },
-  "license": "ISC"
 }

@@ -1,6 +1,0 @@
-seajs.config({
-    alias: {
-    }
-    paths: {
-    }
-})

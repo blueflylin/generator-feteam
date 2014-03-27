@@ -31,11 +31,14 @@ Generator.prototype.askFor = function askFor() {
     name: 'pkg',
     message: 'Select a Framework:',
     choices: [{
+      name: 'Twitter Bootstrap for Sass',
+      value: 'bootstrap-sass'
+    }, {
+      name: 'Twitter Bootstrap (Less)',
+      value: 'bootstrap'
+    }, {
       name: 'Foundation',
       value: 'foundation'
-    }, {
-      name: 'FeTeam',
-      value: 'feteam'
     }]
   }];
 
@@ -55,13 +58,25 @@ Generator.prototype.app = function app() {
 
   console.log( this.kickstartPackage );
 
-  if (this.kickstartPackage == 'feteam') {
-    this.directory('feteam', 'app');
-  }
-
   if (this.kickstartPackage == 'foundation') {
     this.directory('foundation', 'app');
   }
+
+  if (this.kickstartPackage == 'bootstrap' || this.kickstartPackage == 'bootstrap-sass') {
+    this.directory('bootstrap/data', 'app/data');
+    this.directory('bootstrap/html', 'app/html');
+    this.directory('bootstrap/img', 'app/img');
+    this.directory('bootstrap/js', 'app/js');
+  }
+
+  if (this.kickstartPackage == 'bootstrap') {
+    this.directory('bootstrap/less', 'app/less');
+  }
+
+  if (this.kickstartPackage == 'bootstrap-sass') {
+    this.directory('bootstrap/sass', 'app/sass');
+  }
+
 };
 
 Generator.prototype.gruntfile = function gruntfile() {

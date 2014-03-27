@@ -1,3 +1,4 @@
+
 'use strict';
 
 // Live Reload
@@ -29,14 +30,21 @@ module.exports = function(grunt) {
         options: {
           nospawn: true,
         },
-      },
+      },<% if (kickstartPackage == 'bootstrap') { %>
+      less: {
+        files: ['app/less/{,*/}*.less'],
+        tasks: ['watchcontexthelper:less'],
+        options: {
+          nospawn: true
+        },
+      },<% } else { %>
       sass: {
-      files: ['app/sass/{,*/}*.{scss,sass}'],
+        files: ['app/sass/{,*/}*.{scss,sass}'],
         tasks: ['watchcontexthelper:sass'],
         options: {
           nospawn: true
         },
-      },
+      },<% } %>
       js: {
         files: ['app/js/**/*.js'],
         tasks: ['watchcontexthelper:js'],
@@ -45,7 +53,7 @@ module.exports = function(grunt) {
         },
       },
       img: {
-        files: ['app/images/**/*'],
+        files: ['app/img/**/*'],
         tasks: ['watchcontexthelper:img'],
         options: {
           nospawn: true
@@ -88,9 +96,42 @@ module.exports = function(grunt) {
 
     open: {
       server: {
-        path: 'http://localhost:<%= connect.options.port %>/html/'
+        path: 'http://localhost:<%%= connect.options.port %>/html/'
       }
     },
+    <% if (kickstartPackage == 'bootstrap') { %>
+    less: {
+      main: {
+        files: {
+          'dist/css/main.css': 'app/less/app/main.less',
+        },
+      },
+      mainResponsive: {
+        files: {
+          'dist/css/main-responsive.css': 'app/less/app/main-responsive.less',
+        },
+      },
+    },<% } else if (kickstartPackage == 'bootstrap-sass') { %>
+    sass: {
+      main: {
+        files: {
+          'dist/css/main.css': 'app/sass/app/main.scss',
+        },
+      },
+      mainResponsive: {
+        files: {
+          'dist/css/main-responsive.css': 'app/sass/app/main-responsive.scss',
+        },
+      },
+    },<% } else { %>
+    sass: {
+      main: {
+        files: {
+          'dist/css/main.css': 'app/sass/app/main.scss',
+        },
+      },
+    },<% } %>
+
     cssmin: {
       minify: {
         options: {},
@@ -102,58 +143,61 @@ module.exports = function(grunt) {
       }
     },
 
-    concat: {
-      seajs: {
-                options: {
-                    relative: true,
-                    include: 'all',
-                    paths: [
-                        'app/js/sea-modules',
-                        '.build'
-                    ]
-                },
-                files: {
-                'dist/js/main.js': ['.build/{,*/,*/*/}*.js']
-                }
-            }
+    concat: {<% if (kickstartPackage == 'foundation') { %>
+      js: {
+        src: [
+          'app/js/foundation/foundation.js',
+          'app/js/foundation/foundation.alerts.js',
+          'app/js/foundation/foundation.clearing.js',
+          'app/js/foundation/foundation.cookie.js',
+          'app/js/foundation/foundation.dropdown.js',
+          'app/js/foundation/foundation.forms.js',
+          'app/js/foundation/foundation.interchange.js',
+          'app/js/foundation/foundation.joyride.js',
+          'app/js/foundation/foundation.magellan.js',
+          'app/js/foundation/foundation.orbit.js',
+          'app/js/foundation/foundation.placeholder.js',
+          'app/js/foundation/foundation.reveal.js',
+          'app/js/foundation/foundation.section.js',
+          'app/js/foundation/foundation.tooltips.js',
+          'app/js/foundation/foundation.topbar.js',
+          'app/js/app/app.js',
+        ],
+        dest: 'dist/js/frontend.js'
+      },<% } else { %>
+      js: {
+       src: [
+         'app/js/bootstrap/bootstrap-affix.js',
+         'app/js/bootstrap/bootstrap-alert.js',
+         'app/js/bootstrap/bootstrap-button.js',
+         'app/js/bootstrap/bootstrap-carousel.js',
+         'app/js/bootstrap/bootstrap-collapse.js',
+         'app/js/bootstrap/bootstrap-dropdown.js',
+         'app/js/bootstrap/bootstrap-modal.js',
+         'app/js/bootstrap/bootstrap-tooltip.js',
+         'app/js/bootstrap/bootstrap-popover.js',
+         'app/js/bootstrap/bootstrap-scrollspy.js',
+         'app/js/bootstrap/bootstrap-tab.js',
+         'app/js/bootstrap/bootstrap-transition.js',
+         'app/js/bootstrap/bootstrap-typeahead.js',
+         'app/js/app/app.js',
+       ],
+       dest: 'dist/js/frontend.js'
+      },<% } %>
     },
-    transport: {
-            options: {
-                debug: false,
-                alias: {
-                },
-                paths: [
-                    'app/js/sea-modules'
-                ]
-            },
-            seajs: {
-                options: {
-                    paths: [
-                        '',
-                        '.build'
-                    ]
-                },
-                files: [
-                    {
-                        expand:'true',
-                        cwd: '',
-                        src: [
-                        ],
-                        dest: '.build'
-                    }
-                ]
-            }
-        },
-
 
     uglify: {
-
       options: {},
-      seajs: {
-                files: {
-                    'dist/js/main.js': 'dist/js/main.js'
-                }
-            },
+      vendor: {
+        files: [
+          { expand: true, cwd: 'dist/js/vendor/', src: [ '**/*.js', '!**/*.min.js' ], dest: 'dist/js/vendor/', ext: '.min.js' },
+        ]
+      },
+      frontend: {
+        files: [
+          { 'dist/js/frontend.min.js': 'dist/js/frontend.js' },
+        ]
+      },
     },
 
     assemble: {
@@ -180,25 +224,14 @@ module.exports = function(grunt) {
     },
 
     copy: {
-      seajs: {
-                files: [
-                    {
-                        expand: true,
-                        dot: true,
-                        cwd: 'app/js',
-                        src: ['sea-modules/**', 'config.js'],
-                        dest: 'dist/js'
-                    }
-                ]
-            },
       js: {
         files: [
-          { expand: true, cwd: 'app/js/', src: '**/*', dest: 'dist/js/', filter: 'isFile' },
+          { expand: true, cwd: 'app/js/vendor/', src: '**/*', dest: 'dist/js/vendor/', filter: 'isFile' },
         ],
       },
       img: {
         files: [
-          { expand: true, cwd: 'app/images/', src: '**/*', dest: 'dist/images/' },
+          { expand: true, cwd: 'app/img/', src: '**/*', dest: 'dist/img/' },
         ],
       },
       html: {
@@ -213,7 +246,7 @@ module.exports = function(grunt) {
       js: [ 'dist/js' ],
       css: [ 'dist/css' ],
       html: [ 'dist/html' ],
-      img: [ 'dist/images' ],
+      img: [ 'dist/img' ],
       devjs: [ 'dist/js/**/*.js', '!dist/js/**/*.min.js' ],
       devcss: [ 'dist/css/*.css', '!dist/css/*.min.css' ],
     }
@@ -279,43 +312,42 @@ module.exports = function(grunt) {
         (grunt.watchcontext === 'production') ?
         grunt.task.run(['clean:html', 'copy:html', 'assemble:production']) :
         grunt.task.run(['clean:html', 'copy:html', 'assemble:development']);
-        break;
+        break;<% if (kickstartPackage == 'bootstrap') { %>
+      case 'less':
+        (grunt.watchcontext === 'production') ?
+        grunt.task.run(['clean:css', 'less', 'cssmin', 'clean:devcss']) :
+        grunt.task.run(['clean:css', 'less']);
+        break;<% } else { %>
       case 'sass':
         (grunt.watchcontext === 'production') ?
         grunt.task.run(['clean:css', 'sass', 'cssmin', 'clean:devcss']) :
         grunt.task.run(['clean:css', 'sass']);
-        break;
+        break; <% } %>
     }
   });
 
-  grunt.registerTask('sea', [
-        'transport:seajs',
-        'concat:seajs'
-    ]);
-
   grunt.registerTask('production', [
     'clean:dist',
-    'concat',
+    'concat',<% if (kickstartPackage == 'bootstrap') { %>
+    'less',<% } else { %>
+    'sass',<% } %>
     'cssmin',
     'clean:devcss',
     'copy:img',
     'copy:js',
+    'uglify',
     'clean:devjs',
-    'transport:seajs',
-        'concat:seajs',
-        'uglify:seajs',
     'copy:html',
     'assemble:production'
   ]);
 
   grunt.registerTask('development', [
     'clean:dist',
-    'concat',
+    'concat',<% if (kickstartPackage == 'bootstrap') { %>
+    'less',<% } else { %>
+    'sass',<% } %>
     'copy:img',
     'copy:js',
-    'transport:seajs',
-        'concat:seajs',
-        'uglify:seajs',
     'copy:html',
     'assemble:development'
   ]);
