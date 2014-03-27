@@ -12,12 +12,7 @@ module.exports = function(grunt) {
   require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
   grunt.loadNpmTasks('assemble');
 
-  // var path = require('path');
-  // configurable paths
-  var yeomanConfig = {
-    app:'app',
-    dist:'dist'
-  };
+  var path = require('path');
 
   grunt.initConfig({
     yeoman:yeomanConfig,
@@ -37,28 +32,28 @@ module.exports = function(grunt) {
         },
       },
       sass: {
-      files: ['<%= yeoman.app %>/sass/{,*/}*.{scss,sass}'],
+      files: ['app/sass/{,*/}*.{scss,sass}'],
         tasks: ['watchcontexthelper:sass'],
         options: {
           nospawn: true
         },
       },
       js: {
-        files: ['<%= yeoman.app %>/js/**/*.js'],
+        files: ['app/js/**/*.js'],
         tasks: ['watchcontexthelper:js'],
         options: {
           nospawn: true
         },
       },
       img: {
-        files: ['<%= yeoman.app %>/images/**/*'],
+        files: ['app/images/**/*'],
         tasks: ['watchcontexthelper:img'],
         options: {
           nospawn: true
         },
       },
       html: {
-        files: ['<%= yeoman.app %>/html/**/*.hbs'],
+        files: ['app/html/**/*.hbs'],
         tasks: ['watchcontexthelper:html'],
         options: {
           nospawn: true
@@ -101,9 +96,9 @@ module.exports = function(grunt) {
       minify: {
         options: {},
         expand: true,
-        cwd: '<%= yeoman.dist %>/css/',
+        cwd: 'dist/css/',
         src: [ '*.css', '!*.min.css' ],
-        dest: '<%= yeoman.dist %>/css/',
+        dest: 'dist/css/',
         ext: '.min.css',
       }
     },
@@ -114,12 +109,12 @@ module.exports = function(grunt) {
                     relative: true,
                     include: 'all',
                     paths: [
-                        '<%= yeoman.app %>/js/sea-modules',
+                        'app/js/sea-modules',
                         '.build'
                     ]
                 },
                 files: {
-                    '<%= yeoman.dist %>/js/main.js': ['.build/{,*/,*/*/}*.js']
+                'dist/js/main.js': ['.build/{,*/,*/*/}*.js']
                 }
             }
     },
@@ -129,7 +124,7 @@ module.exports = function(grunt) {
                 alias: {
                 },
                 paths: [
-                    '<%= yeoman.app %>/js/sea-modules'
+                    'app/js/sea-modules'
                 ]
             },
             seajs: {
@@ -157,22 +152,22 @@ module.exports = function(grunt) {
       options: {},
       seajs: {
                 files: {
-                    '<%= yeoman.dist %>/js/main.js': '<%= yeoman.dist %>/js/main.js'
+                    'dist/js/main.js': 'dist/js/main.js'
                 }
             },
     },
 
     assemble: {
       options: {
-        data: '<%= yeoman.app %>/html/data/*.{json,yml}',
-        partials: '<%= yeoman.app %>/html/partials/**/*.hbs',
+        data: 'app/html/data/*.{json,yml}',
+        partials: 'app/html/partials/**/*.hbs',
       },
       development: {
         options: {
           production: false
         },
         files: [
-          { expand: true, cwd: '<%= yeoman.app %>/html/pages/', src: ['**/*.hbs'], dest: '<%= yeoman.dist %>/html/' }
+          { expand: true, cwd: 'app/html/pages/', src: ['**/*.hbs'], dest: 'dist/html/' }
         ],
       },
       production: {
@@ -180,7 +175,7 @@ module.exports = function(grunt) {
           production: true
         },
         files: [
-          { expand: true, cwd: '<%= yeoman.app %>/html/pages/', src: ['**/*.hbs'], dest: '<%= yeoman.dist %>/html/' }
+          { expand: true, cwd: 'app/html/pages/', src: ['**/*.hbs'], dest: 'dist/html/' }
         ],
       },
     },
@@ -191,37 +186,37 @@ module.exports = function(grunt) {
                     {
                         expand: true,
                         dot: true,
-                        cwd: '<%= yeoman.app %>/js',
+                        cwd: 'app/js',
                         src: ['sea-modules/**', 'config.js'],
-                        dest: '<%= yeoman.dist %>/js'
+                        dest: 'dist/js'
                     }
                 ]
             },
       js: {
         files: [
-          { expand: true, cwd: '<%= yeoman.app %>/js/', src: '**/*', dest: '<%= yeoman.dist %>/js/', filter: 'isFile' },
+          { expand: true, cwd: 'app/js/', src: '**/*', dest: 'dist/js/', filter: 'isFile' },
         ],
       },
       img: {
         files: [
-          { expand: true, cwd: '<%= yeoman.app %>/images/', src: '**/*', dest: '<%= yeoman.dist %>/images/' },
+          { expand: true, cwd: 'app/images/', src: '**/*', dest: 'dist/images/' },
         ],
       },
       html: {
         files: [
-          { expand: true, cwd: '<%= yeoman.app %>/html/pages/', src: '**/*.html', dest: '<%= yeoman.dist %>/html/' },
+          { expand: true, cwd: 'app/html/pages/', src: '**/*.html', dest: 'dist/html/' },
         ],
       },
     },
 
     clean: {
-      dist: [ '<%= yeoman.dist %>' ],
-      js: [ '<%= yeoman.dist %>/js' ],
-      css: [ '<%= yeoman.dist %>/css' ],
-      html: [ '<%= yeoman.dist %>/html' ],
-      img: [ '<%= yeoman.dist %>/images' ],
-      devjs: [ '<%= yeoman.dist %>/js/**/*.js', '!<%= yeoman.dist %>/js/**/*.min.js' ],
-      devcss: [ '<%= yeoman.dist %>/css/*.css', '!<%= yeoman.dist %>/css/*.min.css' ],
+      dist: [ 'dist' ],
+      js: [ 'dist/js' ],
+      css: [ 'dist/css' ],
+      html: [ 'dist/html' ],
+      img: [ 'dist/images' ],
+      devjs: [ 'dist/js/**/*.js', '!dist/js/**/*.min.js' ],
+      devcss: [ 'dist/css/*.css', '!dist/css/*.min.css' ],
     }
   });
 
